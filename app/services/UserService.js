@@ -1,4 +1,5 @@
 import {User} from "../models/User.js"
+import {checkHashes} from "../helpers/bcrypt.js";
 
 export default new class {
     async createUser(data) {
@@ -11,7 +12,7 @@ export default new class {
     async loginUser(data) {
         try {
             const user = await User.findOne({where: {email: data.email}})
-            if (user.dataValues.password === data.password) {
+            if (await checkHashes(data.password, user.dataValues.password)) {
                 return user
             }
         } catch (err) {
